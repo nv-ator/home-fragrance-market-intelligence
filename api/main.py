@@ -14,17 +14,20 @@ Serves validated, factual product metrics, normalized unit pricing, and empirica
     version="1.0.0"
 )
 
-# CORS Configuration for local React development
+# CORS Configuration for local React development and production deployments
 origins = [
     "http://localhost:3000",
     "http://localhost:5173",
     "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173"
+    "http://127.0.0.1:5173",
+    "https://home-fragrance-market-intelligence-619z48tyj-nvators-projects.vercel.app",
+    "https://home-fragrance-market-intelligence.vercel.app",
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
