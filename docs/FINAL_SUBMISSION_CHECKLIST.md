@@ -24,12 +24,12 @@ This checklist audits the completed project against all explicit requirements fr
 | **Category / subcategory** | **PASS** | `category_name` and `product_format` in `categories` (7 standardized categories). |
 | **Platform** | **PASS** | `platform` in `products` (`Amazon India` or `AromaPure Official`). |
 | **URL / ID** | **PASS** | `canonical_id` and `product_url` in `products`. |
-| **Selling price / MRP** | **PASS** | `selling_price` (100% non-null) and `mrp` (observed on 545 products). |
+| **Selling price / MRP** | **PASS** | `selling_price` (100% non-null) and `mrp` (observed on 479 products). |
 | **Discount** | **PASS** | `discount_pct` (calculated as `((mrp - selling_price) / mrp) * 100`, NULL preserved when MRP missing). |
 | **Pack / unit size** | **PASS** | `pack_count` and `unit_quantity` in `products`. |
 | **Total quantity** | **PASS** | `total_quantity` and `unit` (`ml`, `g`, `count`). |
-| **Rating** | **PASS** | `rating` in `products` (observed on 364 products, strictly preserved as NULL when absent). |
-| **Review count** | **PASS** | `review_count` in `products` (1,387 total reviews across 364 rated marketplace listings). |
+| **Rating** | **PASS** | `rating` in `products` (observed on 340 products, strictly preserved as NULL when absent). |
+| **Review count** | **PASS** | `review_count` in `products` (9,261 total reviews across 491 listings). |
 | **Availability** | **PASS** | `availability` in `products` (`In Stock`, `Out of Stock`). |
 | **Product / fragrance type** | **PASS** | `product_format` in `categories` and title extraction. |
 | **Seller** | **PASS** | `source_name` in `data_sources` and platform tracking. |
@@ -41,12 +41,12 @@ This checklist audits the completed project against all explicit requirements fr
 
 | Item | Status | Verification & Evidence |
 | :--- | :---: | :--- |
-| **Raw data preserved** | **PASS** | 1,436 raw observations preserved immutably in `data/raw/` with cryptographic SHA-256 manifests. |
+| **Raw data preserved** | **PASS** | 1,012 raw observations preserved immutably in `data/raw/` with cryptographic manifests. |
 | **Cleaning implemented** | **PASS** | Strict cleaning pipeline (`src/cleaning/pipeline.py`), parsing prices, quantities, and units. |
-| **Duplicate handling** | **PASS** | 556 duplicate search observations resolved by unique ASIN and variant keys. 1 canonical record preserved. |
+| **Duplicate handling** | **PASS** | 169 duplicate search observations resolved by unique ASIN and variant keys. 1 canonical record preserved. |
 | **Missing-value handling** | **PASS** | Preserved strictly as `NULL`. Zero default imputation for missing discounts, ratings, or reviews. |
 | **Quantity normalization** | **PASS** | Normalizes mass to grams ($g$) and volume to milliliters ($ml$) deterministically. |
-| **Price normalization** | **PASS** | Standardized `price_per_unit` (767 products), `price_per_100ml` (271 products), and `price_per_100g` (30 products). Mass and volume are strictly separated. |
+| **Price normalization** | **PASS** | Standardized `price_per_unit` (684 products), `price_per_100ml` (231 products), and `price_per_100g` (23 products). Mass and volume are strictly separated. |
 | **Database storage** | **PASS** | 3NF normalized SQLite database (`data/market_intelligence.db`) with indexes and analytical views. |
 | **Reproducible pipeline** | **PASS** | Fully automated orchestrator (`src/pipeline/orchestrator.py`) supporting full and modular runs. |
 | **Single-command execution** | **PASS** | Reproducible end-to-end via `python main.py` with 8 automated quality gate checks. |
@@ -57,12 +57,12 @@ This checklist audits the completed project against all explicit requirements fr
 
 | Item | Status | Verification & Evidence |
 | :--- | :---: | :--- |
-| **Market Overview** | **PASS** | 6 KPI cards, brand assortment bar chart, platform donut chart, category bar chart, and price distribution brackets. |
-| **Brand Comparison** | **PASS** | Symmetrical benchmark table and 4 comparative charts with interactive brand drilldown. |
-| **Price Positioning** | **PASS** | Price vs. Rating scatter plot (unrated excluded), brand discount depth, and segregated unit economics cards. |
-| **Product Analysis** | **PASS** | Multi-attribute dynamic filter bar, keyword search, server-side pagination, and product detail drawer. |
-| **Filters** | **PASS** | Brand, category, format, platform, availability, price slider, and rating threshold filters. |
-| **Business Insights** | **PASS** | Category presence matrix and 7 diagnostic cards strictly following the 4-part framework. |
+| **Market Overview** | **PASS** | 6 KPI cards, brand assortment bar chart, platform donut chart, category bar chart, and price distribution brackets (deterministic 120-product sample). |
+| **Brand Comparison** | **PASS** | Symmetrical benchmark table and 4 comparative charts with interactive brand drilldown (full 684 dataset). |
+| **Price Positioning** | **PASS** | Price vs. Rating scatter plot (unrated excluded), brand discount depth, segregated unit economics cards, and statistical clusters (full 684 dataset). |
+| **Product Analysis** | **PASS** | Multi-attribute dynamic filter bar, keyword search, pagination, and product detail drawer (120-product sample). |
+| **Filters** | **PASS** | Brand, category, format, platform, availability, price slider, pack size, and rating threshold filters. |
+| **Business Insights** | **PASS** | Category presence matrix and 8 diagnostic cards strictly following the 4-part framework. |
 
 ---
 

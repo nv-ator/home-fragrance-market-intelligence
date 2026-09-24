@@ -90,7 +90,7 @@ export default function Sidebar({ activeTab, setActiveTab, activePage, setActive
             <span>Public Catalogue Dataset</span>
           </div>
           <p className="text-[11px] leading-relaxed text-slate-400">
-            767 validated products across 5 competitor brands.
+            684 validated products across 5 competitor brands.
           </p>
         </div>
       </aside>

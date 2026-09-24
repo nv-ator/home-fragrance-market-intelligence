@@ -15,16 +15,16 @@ def test_market_overview():
     response = client.get("/api/overview")
     assert response.status_code == 200
     data = response.json()
-    assert data["total_products"] == 767
+    assert data["total_products"] == 684
     assert data["total_brands"] == 5
-    assert data["average_price"] == 667.81
-    assert data["median_price"] == 448.0
+    assert data["average_price"] == 663.42
+    assert data["median_price"] == 434.0
     assert len(data["products_by_brand"]) == 5
     assert len(data["products_by_platform"]) == 2
     assert "price_distribution" in data
     assert len(data["price_distribution"]) == 5
     dist_total = sum(d["product_count"] for d in data["price_distribution"])
-    assert dist_total == 767
+    assert dist_total == 684
 
 
 def test_brands_list():
@@ -53,7 +53,7 @@ def test_brand_detail_valid():
     assert response.status_code == 200
     data = response.json()
     assert data["brand"] == "AromaPure"
-    assert data["product_count"] == 360
+    assert data["product_count"] == 298
     assert "price_statistics" in data
     assert "category_distribution" in data
 
@@ -67,17 +67,17 @@ def test_product_pagination():
     assert response.status_code == 200
     data = response.json()
     assert len(data["products"]) == 20
-    assert data["total"] == 767
+    assert data["total"] == 684
     assert data["page"] == 1
     assert data["page_size"] == 20
-    assert data["total_pages"] == 39
+    assert data["total_pages"] == 35
 
 def test_product_filters():
     # Filter by brand
     resp_b = client.get("/api/products?brand=Odonil&page_size=200")
     assert resp_b.status_code == 200
     data_b = resp_b.json()
-    assert data_b["total"] == 145
+    assert data_b["total"] == 132
     for p in data_b["products"]:
         assert p["brand"] == "Odonil"
 
@@ -121,7 +121,7 @@ def test_price_positioning_endpoint():
     resp = client.get("/api/analytics/price-positioning")
     assert resp.status_code == 200
     data = resp.json()
-    assert len(data) == 767
+    assert len(data) == 684
     sample = data[0]
     assert "selling_price" in sample
     assert "rating" in sample
@@ -137,8 +137,8 @@ def test_price_normalization_endpoint():
     assert data["price_per_100g"]["unit"] == "INR/100g"
     assert data["price_per_100ml"]["unit"] == "INR/100ml"
     # Never combined into same metric
-    assert data["price_per_100g"]["count"] == 30
-    assert data["price_per_100ml"]["count"] == 271
+    assert data["price_per_100g"]["count"] == 23
+    assert data["price_per_100ml"]["count"] == 231
 
 def test_category_analysis():
     resp = client.get("/api/analytics/categories")
@@ -163,7 +163,7 @@ def test_discount_analysis():
     resp = client.get("/api/analytics/discounts")
     assert resp.status_code == 200
     data = resp.json()
-    assert len(data) == 545
+    assert len(data) == 479
     for item in data:
         assert item["discount_pct"] is not None
         assert item["discount_pct"] >= 0
@@ -205,13 +205,13 @@ def test_product_clusters():
     resp = client.get("/api/analytics/product-clusters")
     assert resp.status_code == 200
     data = resp.json()
-    assert data["usable_product_count"] == 171
-    assert data["total_catalogue_count"] == 767
+    assert data["usable_product_count"] == 159
+    assert data["total_catalogue_count"] == 684
     assert data["selected_k"] in [2, 3, 4, 5]
     assert data["silhouette_score"] > 0.3
     assert len(data["clusters"]) == data["selected_k"]
     total_clustered = sum(c["product_count"] for c in data["clusters"])
-    assert total_clustered == 171
+    assert total_clustered == 159
     for c in data["clusters"]:
         assert c["cluster_name"].startswith("Cluster ")
         assert c["average_price"] > 0
@@ -221,7 +221,7 @@ def test_product_pack_size_filter():
     resp = client.get("/api/products?pack_count=1")
     assert resp.status_code == 200
     data = resp.json()
-    assert data["total"] == 677
+    assert data["total"] == 599
     assert len(data["products"]) > 0
 
     resp_multi = client.get("/api/products?pack_size=20")

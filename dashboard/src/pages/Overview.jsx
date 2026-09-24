@@ -258,7 +258,7 @@ export default function Overview() {
             Observed Catalogue vs. Commercial Sales
           </h3>
           <p className="text-xs text-slate-300 leading-relaxed">
-            Analysis is based on publicly accessible product listings collected from the selected sources. This Market Overview uses the deterministic dashboard sample of 120 products, while the full validated dataset contains 767 products.
+            Analysis is based on publicly accessible product listings collected from the selected sources. This Market Overview uses the deterministic dashboard sample of 120 products, while the full validated dataset contains 684 products.
           </p>
           <ul className="mt-3 space-y-2 text-xs text-slate-400 list-disc list-inside">
             <li>Percentages indicate <strong className="text-slate-200">Share of Collected Assortment</strong>, NOT commercial market share.</li>

@@ -117,7 +117,7 @@ export default function ProductAnalysis() {
       <div>
         <h2 className="text-xl font-bold text-slate-900 tracking-tight">Product Catalogue Exploration</h2>
         <p className="text-xs text-slate-500 mt-1">
-          Search, filter, and inspect a balanced dashboard sample of 120 products from the full 767-product validated catalogue.
+          Search, filter, and inspect a balanced dashboard sample of 120 products from the full 684-product validated catalogue.
         </p>
       </div>
 
@@ -132,7 +132,7 @@ export default function ProductAnalysis() {
       <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600">
         <span className="font-semibold text-slate-800">Dashboard Sample: 120 products</span>
         <span>24 products per brand</span>
-        <span className="text-slate-400">Full dataset: 767 validated products</span>
+        <span className="text-slate-400">Full dataset: 684 validated products</span>
       </div>
 
       {/* Error state */}

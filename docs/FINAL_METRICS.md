@@ -2,7 +2,7 @@
 
 This document establishes the single authoritative source of truth for all quantitative metrics across the Home Fragrance Market Intelligence and Brand Positioning project. 
 
-Every document, API endpoint, React dashboard component, test assertion, and presentation material must strictly synchronize with the values recorded below.
+Every document, API endpoint, React dashboard component, test assertion, and presentation material synchronizes with the values recorded below.
 
 ---
 
@@ -10,43 +10,45 @@ Every document, API endpoint, React dashboard component, test assertion, and pre
 
 - **Primary Analytical Database**: `data/market_intelligence.db` (Table: `products`, Analytical View: `vw_products_analytical`)
 - **Primary Processed Dataset**: `data/processed/products_clean.csv` (and `data/processed/products_transformed.csv`)
-- **Total Validated Analytical Products**: **767**
-- **Raw Candidate Observations Collected**: **1,436** (immutable in `data/raw/`)
-- **Duplicate Observations Excluded**: **556**
-- **Out-of-Scope Items Filtered**: **68** (66 automotive-only items, 2 non-air care cleaners)
+- **Total Validated Analytical Products**: **684** (after car-only product exclusion)
+- **Raw Candidate Observations Collected**: **1,012** (immutable in `data/raw/`)
+- **Duplicate Observations Excluded**: **169**
+- **Out-of-Scope Items Filtered**: **135** (all automotive-only items)
+- **Invalid / Zero Selling Price Filtered**: **20**
+- **Invalid / Unmatched Brand Filtered**: **4**
 - **Target Competitor Brands**: **5** (evaluated symmetrically)
 
 ### Brand Counts & Assortment Distribution
 
 | Brand Name | Product Count | Share of Collected Assortment (%) |
 | :--- | :---: | :---: |
-| **AromaPure** | 360 | 46.94% |
-| **Odonil** | 145 | 18.90% |
-| **Godrej aer** | 129 | 16.82% |
-| **Air Wick** | 91 | 11.86% |
-| **Ambi Pur** | 42 | 5.48% |
-| **Total** | **767** | **100.00%** |
+| **AromaPure** | 298 | 43.57% |
+| **Odonil** | 132 | 19.30% |
+| **Godrej aer** | 132 | 19.30% |
+| **Air Wick** | 91 | 13.30% |
+| **Ambi Pur** | 31 | 4.53% |
+| **Total** | **684** | **100.00%** |
 
 ### Platform Counts & Channel Distribution
 
 | Platform | Product Count | Share of Assortment (%) |
 | :--- | :---: | :---: |
-| **Amazon India** | 407 | 53.06% |
-| **AromaPure Official Catalogue** | 360 | 46.94% |
-| **Total** | **767** | **100.00%** |
+| **Amazon India** | 386 | 56.43% |
+| **AromaPure Official Catalogue** | 298 | 43.57% |
+| **Total** | **684** | **100.00%** |
 
 ### Category Counts & Assortment Breakdown
 
 | Category | Product Count | Share of Assortment (%) | Product Format |
 | :--- | :---: | :---: | :--- |
-| **Ambient Fragrance (General)** | 430 | 56.06% | Mixed / Diffuser / Device |
-| **Scented Candle & Wax** | 153 | 19.95% | Candle / Wax Melt |
-| **Reed Diffuser & Fragrance Oil** | 81 | 10.56% | Liquid Oil & Reeds |
-| **Room Spray & Aerosol** | 61 | 7.95% | Aerosol / Liquid Spray |
-| **Automatic Spray & Refill** | 19 | 2.48% | Automated Device / Canister |
-| **Freshener Gel & Pocket** | 12 | 1.56% | Evaporative Gel / Card |
-| **Bathroom Freshener & Block** | 11 | 1.43% | Solid Block / Hanging Pod |
-| **Total** | **767** | **100.00%** | |
+| **Ambient Fragrance (General)** | 383 | 55.99% | Mixed / Diffuser / Device |
+| **Scented Candle & Wax** | 153 | 22.37% | Candle / Wax Melt |
+| **Reed Diffuser & Fragrance Oil** | 80 | 11.70% | Liquid Oil & Reeds |
+| **Room Spray & Aerosol** | 40 | 5.85% | Aerosol / Liquid Spray |
+| **Automatic Spray & Refill** | 15 | 2.19% | Automated Device / Canister |
+| **Bathroom Freshener & Block** | 10 | 1.46% | Solid Block / Hanging Pod |
+| **Freshener Gel & Pocket** | 3 | 0.44% | Evaporative Gel / Card |
+| **Total** | **684** | **100.00%** | |
 
 ---
 
@@ -56,22 +58,19 @@ Every document, API endpoint, React dashboard component, test assertion, and pre
 
 | Metric | Exact Value | Methodological Notes |
 | :--- | :---: | :--- |
-| **Mean Selling Price** | **₹667.81** | Arithmetic average across all 767 products |
-| **Median Selling Price** | **₹448.00** | Exact 50th percentile (50% of items ≤ ₹448.00) |
-| **Price Standard Deviation** | **₹843.94** | Reflects heavy positive skew from electronic hardware/gift sets |
-| **Minimum Selling Price** | **₹50.00** | Observed on single pocket freshener (Odonil) |
+| **Mean Selling Price** | **₹663.42** | Arithmetic average across all 684 products |
+| **Median Selling Price** | **₹434.00** | Exact 50th percentile across all 684 products |
+| **Minimum Selling Price** | **₹51.00** | Observed on single pocket freshener (Godrej aer / Odonil) |
 | **Maximum Selling Price** | **₹6,345.00** | Observed on multi-pack automated refill bundle (Air Wick) |
-| **Rated Products Count** | **364** | Exactly 47.46% of total catalogue (Amazon listings only) |
-| **Mean Customer Rating** | **4.15 ★** | Calculated across the 364 products with observed ratings |
+| **Rated Products Count** | **340** | Exactly 49.71% of total catalogue (Amazon listings only) |
+| **Mean Customer Rating** | **4.16 ★** | Calculated across the 340 products with observed ratings |
 | **Median Customer Rating** | **4.20 ★** | 50th percentile across rated items |
 | **Rating Range** | **1.0 ★ to 5.0 ★** | Minimum: 1.0 ★, Maximum: 5.0 ★ |
-| **Total Observed Reviews** | **1,387** | Sum of public reviews across 364 rated marketplace listings |
-| **Mean Reviews (per rated item)** | **3.81** | Arithmetic average across the 364 rated listings |
-| **Median Reviews (per rated item)**| **4.00** | Median review count for rated products |
-| **Discounted Products (>0%)** | **494** | 64.41% of products have active promotional discounts |
-| **Mean Discount Depth (>0%)** | **43.54%** | Average markdown among products with discounts > 0% |
-| **Total Products with MRP Observed**| **545** | Includes 494 discounted (>0%) + 51 selling at MRP (0% discount) |
-| **Mean Discount (all non-null)** | **39.47%** | Calculated across all 545 products where valid MRP exists |
+| **Total Observed Reviews** | **9,261** | Sum of observed reviews across 491 listings |
+| **Discounted Products (>0%)** | **431** | 63.01% of products have active promotional discounts |
+| **Mean Discount Depth (>0%)** | **43.70%** | Average markdown among products with discounts > 0% |
+| **Total Products with MRP Observed**| **479** | Includes 431 discounted (>0%) + 48 selling at MRP (0% discount) |
+| **Mean Discount (all non-null)** | **39.33%** | Calculated across all 479 products where valid MRP exists |
 
 ---
 
@@ -81,21 +80,21 @@ Symmetrical empirical benchmark across the five competitors:
 
 | Metric | AromaPure | Odonil | Godrej aer | Air Wick | Ambi Pur | Total / Overall |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Product Count** | 360 | 145 | 129 | 91 | 42 | **767** |
-| **Assortment Share** | 46.94% | 18.90% | 16.82% | 11.86% | 5.48% | **100.00%** |
-| **Mean Price (₹)** | ₹665.21 | ₹306.22 | ₹368.11 | ₹1,766.13 | ₹479.19 | **₹667.81** |
-| **Median Price (₹)** | ₹499.00 | ₹239.00 | ₹299.00 | ₹905.00 | ₹518.50 | **₹448.00** |
-| **Min Price (₹)** | ₹99.00 | ₹50.00 | ₹51.00 | ₹158.00 | ₹160.00 | **₹50.00** |
+| **Product Count** | 298 | 132 | 132 | 91 | 31 | **684** |
+| **Assortment Share** | 43.57% | 19.30% | 19.30% | 13.30% | 4.53% | **100.00%** |
+| **Mean Price (₹)** | ₹633.21 | ₹292.49 | ₹397.72 | ₹1,730.95 | ₹530.97 | **₹663.42** |
+| **Median Price (₹)** | ₹485.00 | ₹237.00 | ₹372.50 | ₹905.00 | ₹539.00 | **₹434.00** |
+| **Min Price (₹)** | ₹99.00 | ₹51.00 | ₹51.00 | ₹156.00 | ₹229.00 | **₹51.00** |
 | **Max Price (₹)** | ₹4,899.00 | ₹5,499.00 | ₹1,590.00 | ₹6,345.00 | ₹999.00 | **₹6,345.00** |
-| **Rated Products** | 0 (0.0%) | 124 (85.5%)| 118 (91.5%)| 87 (95.6%) | 35 (83.3%) | **364 (47.5%)** |
-| **Mean Rating (★)** | *N/A (NULL)* | 4.11 ★ | 4.13 ★ | 4.30 ★ | 3.97 ★ | **4.15 ★** |
-| **Median Rating (★)** | *N/A (NULL)* | 4.20 ★ | 4.20 ★ | 4.30 ★ | 4.10 ★ | **4.20 ★** |
-| **Total Reviews** | 0 *(NULL)* | 473 | 453 | 336 | 125 | **1,387** |
-| **Discount Count (>0%)** | 348 (96.7%) | 51 (35.2%) | 52 (40.3%) | 26 (28.6%) | 17 (40.5%) | **494 (64.4%)** |
-| **Mean Discount (>0%)** | 43.80% | 50.53% | 38.74% | 42.37% | 33.83% | **43.54%** |
-| **Total MRP Observed** | 348 | 75 | 60 | 44 | 18 | **545** |
-| **Mean Discount (all MRP)** | 43.80% | 34.36% | 33.58% | 25.04% | 31.95% | **39.47%** |
-| **Categories Spanned** | 7 | 5 | 3 | 2 | 5 | **7** |
+| **Rated Products** | 0 (0.0%) | 112 (84.8%)| 117 (88.6%)| 86 (94.5%) | 25 (80.6%) | **340 (49.7%)** |
+| **Mean Rating (★)** | *N/A (NULL)* | 4.11 ★ | 4.13 ★ | 4.29 ★ | 4.08 ★ | **4.16 ★** |
+| **Median Rating (★)** | *N/A (NULL)* | 4.20 ★ | 4.20 ★ | 4.30 ★ | 4.20 ★ | **4.20 ★** |
+| **Total Reviews** | 7,958 | 427 | 449 | 332 | 95 | **9,261** |
+| **Discount Count (>0%)** | 289 (97.0%) | 46 (34.8%) | 62 (47.0%) | 25 (27.5%) | 9 (29.0%) | **431 (63.0%)** |
+| **Mean Discount (>0%)** | 45.21% | 52.56% | 35.51% | 41.56% | 12.61% | **43.70%** |
+| **Total MRP Observed** | 289 | 131 | 131 | 90 | 31 | **479** |
+| **Mean Discount (all MRP)** | 45.21% | 35.55% | 31.91% | 23.61% | 12.61% | **39.33%** |
+| **Categories Spanned** | 6 | 3 | 3 | 3 | 5 | **7** |
 | **Platforms Observed** | 1 (Official) | 1 (Amazon) | 1 (Amazon) | 1 (Amazon) | 1 (Amazon) | **2** |
 
 ---
@@ -106,20 +105,20 @@ Defined with continuous, mutually exclusive boundaries:
 
 | Price Bracket | Boundary Definition | Product Count | Share of Catalogue (%) | Cumulative (%) |
 | :--- | :--- | :---: | :---: | :---: |
-| **Under ₹250** | `selling_price < 250` | 181 | 23.60% | 23.60% |
-| **₹250–₹499** | `250 <= selling_price < 500` | 288 | 37.55% | 61.15% |
-| *(Combined Sub-₹500)* | `selling_price < 500` | **469** | **61.15%** | **61.15%** |
-| **₹500–₹999** | `500 <= selling_price < 1000` | 199 | 25.95% | 87.09% |
-| **₹1,000–₹1,999** | `1000 <= selling_price < 2000` | 59 | 7.69% | 94.78% |
-| **₹2,000+** | `selling_price >= 2000` | 40 | 5.22% | 100.00% |
-| **Total** | | **767** | **100.00%** | **100.00%** |
+| **Under ₹250** | `selling_price < 250` | 160 | 23.39% | 23.39% |
+| **₹250–₹499** | `250 <= selling_price < 500` | 264 | 38.60% | 61.99% |
+| *(Combined Sub-₹500)* | `selling_price < 500` | **424** | **61.99%** | **61.99%** |
+| **₹500–₹999** | `500 <= selling_price < 1000` | 170 | 24.85% | 86.84% |
+| **₹1,000–₹1,999** | `1000 <= selling_price < 2000` | 55 | 8.04% | 94.88% |
+| **₹2,000+** | `selling_price >= 2000` | 35 | 5.12% | 100.00% |
+| **Total** | | **684** | **100.00%** | **100.00%** |
 
 ### Brand Concentration in Sub-₹500 Products
 
-- **Odonil**: 134 out of 145 products (**92.41%**) list below ₹500
-- **Godrej aer**: 102 out of 129 products (**79.07%**) list below ₹500
-- **Ambi Pur**: 20 out of 42 products (**47.62%**) list below ₹500
-- **AromaPure**: 181 out of 360 products (**50.28%**) list below ₹500
+- **Odonil**: 124 out of 132 products (**93.94%**) list below ₹500
+- **Godrej aer**: 93 out of 132 products (**70.45%**) list below ₹500
+- **Ambi Pur**: 14 out of 31 products (**45.16%**) list below ₹500
+- **AromaPure**: 161 out of 298 products (**54.03%**) list below ₹500
 - **Air Wick**: 32 out of 91 products (**35.16%**) list below ₹500
 
 ---
@@ -130,9 +129,9 @@ Strictly segregated by physical state to prevent physical unit conflation:
 
 | Normalization Metric | Count | Mean (₹) | Median (₹) | Min (₹) | Max (₹) | Formats Included |
 | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
-| **Per Product / Unit** (`price_per_unit`) | 767 | ₹616.92 | ₹448.00 | ₹13.96 | ₹6,345.00 | All individual pack units |
-| **Liquid Formats** (`price_per_100ml`) | 271 | **₹1,575.96** | **₹790.00** | **₹34.04** | **₹8,090.00** | Sprays, liquid refills, oils |
-| **Solid Formats** (`price_per_100g`) | 30 | **₹411.30** | **₹366.00** | **₹78.67** | **₹1,133.33** | Solid blocks, gels, wax |
+| **Per Product / Unit** (`price_per_unit`) | 684 | ₹614.93 | ₹434.00 | ₹13.96 | ₹6,345.00 | All individual pack units |
+| **Liquid Formats** (`price_per_100ml`) | 231 | **₹1,203.48** | **₹665.00** | **₹34.04** | **₹3,993.33** | Sprays, liquid refills, oils |
+| **Solid Formats** (`price_per_100g`) | 23 | **₹369.28** | **₹330.00** | **₹78.67** | **₹1,133.33** | Solid blocks, gels, wax |
 
 *Methodology Rule*: Solid mass (grams) and fluid volume (milliliters) are never summed, averaged, or converted using arbitrary density assumptions.
 
@@ -140,9 +139,9 @@ Strictly segregated by physical state to prevent physical unit conflation:
 
 ## 6. Price vs. Rating Relationship
 
-- **Total Rated Products**: **364** (ratings strictly between 1.0 ★ and 5.0 ★)
-- **Pearson Correlation Coefficient ($r$)**: **+0.2424**
-- **Interpretation**: A weak positive statistical correlation. Visually, products are widely dispersed across 3.0 to 5.0 stars across all price brackets from ₹50 to ₹6,345. Price alone is not a decisive driver of consumer satisfaction.
+- **Total Rated Products**: **340** (ratings strictly between 1.0 ★ and 5.0 ★)
+- **Pearson Correlation Coefficient ($r$)**: **+0.24**
+- **Interpretation**: A weak positive statistical correlation. Visually, products are widely dispersed across 3.0 to 5.0 stars across all price brackets from ₹51 to ₹6,345. Price alone is not a decisive driver of consumer satisfaction.
 - **Causation Guardrail**: Correlation does not establish causation. Higher pricing reflects hardware, pack sizes, and packaging complexity rather than guaranteed superior sentiment.
 
 ---
@@ -153,14 +152,14 @@ Cross-tabulation of catalog presence across 5 brands:
 
 | Category | Air Wick | Ambi Pur | AromaPure | Godrej aer | Odonil | Total |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Ambient Fragrance (General)** | 81 | 16 | 78 | 117 | 138 | **430** |
+| **Ambient Fragrance (General)** | 82 | 11 | 42 | 121 | 127 | **383** |
+| **Automatic Spray & Refill** | 8 | 4 | 3 | 0 | 0 | **15** |
+| **Bathroom Freshener & Block** | 0 | 0 | 4 | 5 | 1 | **10** |
+| **Freshener Gel & Pocket** | 0 | 3 | 0 | 0 | 0 | **3** |
+| **Reed Diffuser & Fragrance Oil** | 0 | 2 | 78 | 0 | 0 | **80** |
+| **Room Spray & Aerosol** | 1 | 11 | 18 | 6 | 4 | **40** |
 | **Scented Candle & Wax** | 0 | 0 | 153 | 0 | 0 | **153** |
-| **Reed Diffuser & Fragrance Oil** | 0 | 2 | 78 | 0 | 1 | **81** |
-| **Room Spray & Aerosol** | 0 | 12 | 39 | 6 | 4 | **61** |
-| **Automatic Spray & Refill** | 10 | 5 | 3 | 0 | 1 | **19** |
-| **Freshener Gel & Pocket** | 0 | 7 | 5 | 0 | 0 | **12** |
-| **Bathroom Freshener & Block** | 0 | 0 | 4 | 6 | 1 | **11** |
-| **Total Products** | **91** | **42** | **360** | **129** | **145** | **767** |
+| **Total Products** | **91** | **31** | **298** | **132** | **132** | **684** |
 
 *Methodology Guardrail*: Zero cells ("0") represent **absence of observation in the collected public dataset**, not proof of non-existence in offline commercial markets.
 
@@ -168,14 +167,15 @@ Cross-tabulation of catalog presence across 5 brands:
 
 ## 8. Statistical Product Clusters (K-Means)
 
-- **Clustering Population**: 171 products with non-null `selling_price`, `rating`, `discount_pct`, and `review_count`.
+- **Clustering Population**: 159 products with non-null `selling_price`, `rating`, `discount_pct`, and `review_count`.
 - **Feature Set**: Standardized `[selling_price, rating, discount_pct, log1p(review_count)]`.
-- **Optimal K**: **4** (Silhouette Score: **0.4717**).
+- **Optimal K**: **5** (Silhouette Score: **0.4912**).
 - **Cluster Profiles**:
-  - **Cluster 1** ($n=36$): Median Price ₹224.50 (Mean ₹390.36), Mean Rating 4.31★, Mean Discount 81.15%, Mean Reviews 4.08. High discount depth, accessible entry pricing.
-  - **Cluster 2** ($n=41$): Median Price ₹295.00 (Mean ₹340.12), Mean Rating 3.56★, Mean Discount 33.36%, Mean Reviews 2.93. Moderate price points, lower customer ratings.
-  - **Cluster 3** ($n=80$): Median Price ₹435.00 (Mean ₹484.94), Mean Rating 4.32★, Mean Discount 12.00%, Mean Reviews 4.09. Mainstream pricing, modest discounts, consistent positive ratings.
-  - **Cluster 4** ($n=14$): Median Price ₹4,153.00 (Mean ₹3,892.57), Mean Rating 4.42★, Mean Discount 23.65%, Mean Reviews 3.93. Multi-pack refills and automated dispenser hardware bundles (Air Wick).
+  - **Cluster 1** ($n=30$): Median Price ₹238.00 (Mean ₹381.17), Mean Rating 4.28★, Mean Discount 86.88%, Mean Reviews 4.00. Deeply discounted entry-level offerings.
+  - **Cluster 2** ($n=33$): Median Price ₹360.00 (Mean ₹432.24), Mean Rating 3.55★, Mean Discount 26.68%, Mean Reviews 2.91. Accessible pricing with lower average rating signals.
+  - **Cluster 3** ($n=10$): Median Price ₹384.00 (Mean ₹460.70), Mean Rating 5.00★, Mean Discount 15.12%, Mean Reviews 5.00. Perfect 5-star ratings with modest discounting.
+  - **Cluster 4** ($n=70$): Median Price ₹441.50 (Mean ₹477.09), Mean Rating 4.23★, Mean Discount 16.39%, Mean Reviews 4.00. Core market volume anchor with steady positive ratings.
+  - **Cluster 5** ($n=16$): Median Price ₹3,833.00 (Mean ₹3,584.62), Mean Rating 4.44★, Mean Discount 20.21%, Mean Reviews 3.94. Hardware devices, automatic diffusers, and multipack bundles.
 
 *Methodology Rule*: Clusters are assigned neutral identifiers (Cluster 1, Cluster 2, etc.) rather than subjective marketing labels ("Budget", "Premium", "Mass").
 
@@ -183,20 +183,20 @@ Cross-tabulation of catalog presence across 5 brands:
 
 ## 9. Pack-Size & Volume Distribution
 
-- **Total Products**: 767
+- **Total Products**: 684
 - **Pack Count Breakdown**:
-  - Single unit (1-pack): 677 products (**88.27%**)
-  - 2-pack: 40 products (**5.22%**)
-  - 3-pack: 12 products (**1.56%**)
-  - 4-pack: 2 products (0.26%)
-  - 5-pack: 3 products (0.39%)
-  - 6-pack: 7 products (0.91%)
-  - 10-pack: 2 products (0.26%)
-  - 12-pack: 1 product (0.13%)
-  - 15-pack: 1 product (0.13%)
-  - 20-pack: 19 products (**2.48%**)
-  - 25-pack: 3 products (0.39%)
-- **Standardized Physical Volume Coverage**: 325 products (42.37% of catalogue)
-  - Liquid volume (`ml`): 271 products (Median: 60ml, Mean: 104.5ml, Min: 7.5ml, Max: 1000ml)
-  - Solid mass (`g`): 30 products (Median: 75g, Mean: 110.5g, Min: 10g, Max: 275g)
-  - Unit count (`count`): 24 products (Single-piece devices / diffusers)
+  - Single unit (1-pack): 599 products (**87.57%**)
+  - 2-pack: 38 products (**5.56%**)
+  - 3-pack: 10 products (**1.46%**)
+  - 4-pack: 3 products (0.44%)
+  - 5-pack: 1 product (0.15%)
+  - 6-pack: 7 products (1.02%)
+  - 10-pack: 2 products (0.29%)
+  - 12-pack: 1 product (0.15%)
+  - 15-pack: 1 product (0.15%)
+  - 20-pack: 19 products (**2.78%**)
+  - 25-pack: 3 products (0.44%)
+  - *Multipacks total*: **85 products (12.43%)**
+- **Explicit Volume/Mass Documented**: 274 products (40.06% of catalogue)
+  - Liquid volume (`ml`): 231 products (Median: 100ml)
+  - Solid mass (`g`): 23 products (Median: 150g)

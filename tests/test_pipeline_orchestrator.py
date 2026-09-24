@@ -123,9 +123,9 @@ def test_idempotency_database_loading():
     loader = DatabaseLoader()
     count1 = loader.load_processed_csv("data/processed/products_clean.csv")
     count2 = loader.load_processed_csv("data/processed/products_clean.csv")
-    assert count1 == 767
-    assert count2 == 767
+    assert count1 == 684
+    assert count2 == 684
     
     val = loader.validate_database()
-    assert val["total_products"] == 767
-    assert val["unique_canonical"] == 767
+    assert val["total_products"] == 684
+    assert val["unique_canonical"] == 684

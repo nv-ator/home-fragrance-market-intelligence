@@ -1,0 +1,68 @@
+{
+  "run_id": "20260924_050352",
+  "start_time": "2026-09-24T05:03:52.704331+00:00",
+  "end_time": "2026-09-24T05:08:56.270489+00:00",
+  "duration_seconds": 303.57,
+  "status": "SUCCESS",
+  "stages": {
+    "collect": {
+      "status": "SUCCESS",
+      "records_count": 1012,
+      "path": "data/raw\\all_raw_candidates_20260924_050352.json"
+    },
+    "clean": {
+      "status": "SUCCESS",
+      "valid_count": 684,
+      "rejected_count": 328,
+      "clean_path": "data/processed\\products_clean.csv",
+      "rejected_path": "data/processed\\products_rejected.csv"
+    },
+    "transform": {
+      "status": "SUCCESS",
+      "records_count": 684,
+      "path": "data/processed/products_transformed.csv"
+    },
+    "database": {
+      "status": "SUCCESS",
+      "products_loaded": 684,
+      "brands": {
+        "Air Wick": 91,
+        "Ambi Pur": 31,
+        "AromaPure": 298,
+        "Godrej aer": 132,
+        "Odonil": 132
+      }
+    },
+    "validate": {
+      "status": "SUCCESS",
+      "checks": {
+        "csv_exists": true,
+        "total_csv_products": 684,
+        "min_100_products_passed": true,
+        "all_5_brands_present": true,
+        "brand_counts": {
+          "AromaPure": 298,
+          "Odonil": 132,
+          "Godrej aer": 132,
+          "Air Wick": 91,
+          "Ambi Pur": 31
+        },
+        "each_brand_ge_20_products": true,
+        "selling_prices_valid": true,
+        "canonical_ids_unique": true,
+        "db_row_count": 684,
+        "db_matches_csv": true,
+        "required_views_operational": true
+      }
+    }
+  },
+  "brand_counts": {
+    "Air Wick": 91,
+    "Ambi Pur": 31,
+    "AromaPure": 298,
+    "Godrej aer": 132,
+    "Odonil": 132
+  },
+  "database_product_count": 684,
+  "errors": []
+}

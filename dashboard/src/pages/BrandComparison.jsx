@@ -93,7 +93,7 @@ export default function BrandComparison() {
           <h2 className="text-xl font-bold text-slate-900 tracking-tight">Brand Comparison Matrix</h2>
           <p className="text-xs text-slate-500 mt-0.5">
             Comparison of collected catalogue pricing, assortment and publicly visible review data.
-            <span className="block text-[11px] text-slate-400 mt-1">Full dataset benchmark — 767 validated products.</span>
+            <span className="block text-[11px] text-slate-400 mt-1">Full dataset benchmark — 684 validated products.</span>
           </p>
         </div>
 

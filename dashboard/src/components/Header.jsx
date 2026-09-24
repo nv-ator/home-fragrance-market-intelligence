@@ -76,7 +76,7 @@ export default function Header({
             {/* Database Indicator */}
             <div className="flex items-center gap-1.5 text-xs text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200 font-medium">
               <Database className="w-3.5 h-3.5 text-slate-500" />
-              <span>Full Dataset: 767</span>
+              <span>Full Dataset: 684</span>
             </div>
             <div className="hidden lg:flex items-center text-xs text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200 font-semibold">
               Dashboard Sample: 120

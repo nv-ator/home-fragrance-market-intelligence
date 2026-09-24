@@ -36,7 +36,7 @@ def test_product_count_matches_csv(db_conn):
     db_count = cursor.execute("SELECT COUNT(*) FROM products;").fetchone()[0]
     df_csv = pd.read_csv(CSV_PATH)
     assert db_count == len(df_csv)
-    assert db_count == 767
+    assert db_count == 684
 
 def test_five_brands_exist_and_match(db_conn):
     cursor = db_conn.cursor()
@@ -64,7 +64,7 @@ def test_null_values_preserved(db_conn):
         WHERE b.brand_name = 'AromaPure';
     """).fetchone()[0]
     assert null_ratings == aromapure_total
-    assert null_ratings == 360
+    assert null_ratings == 298
 
 def test_numeric_ranges_and_constraints(db_conn):
     cursor = db_conn.cursor()

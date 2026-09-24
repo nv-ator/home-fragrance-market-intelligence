@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import {
   ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip, ResponsiveContainer, Legend,
   BarChart, Bar
 } from 'recharts';
@@ -119,7 +119,7 @@ export default function PricePositioning() {
           <h2 className="text-xl font-bold text-slate-900 tracking-tight">Price Positioning & Unit Economics</h2>
           <p className="text-xs text-slate-500 mt-0.5">
             Empirical price-to-rating relationships, discount distributions, format-specific unit pricing, and statistical product clusters.
-            <span className="block text-[11px] text-slate-400 mt-1">Full dataset analytics — 767 validated products.</span>
+            <span className="block text-[11px] text-slate-400 mt-1">Full dataset analytics — 684 validated products.</span>
           </p>
         </div>
 
@@ -139,91 +139,62 @@ export default function PricePositioning() {
         </div>
       </div>
 
-      {/* Visualizations Grid: Price vs. Rating & Promotional Discount Depth */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Main Scatter Plot: Price vs. Rating */}
-        <ChartCard
-          title="Price vs. Customer Rating Distribution"
-          subtitle="Scatter distribution of selling price (INR) vs. star rating (0–5)"
-          note="Only products with an observed public rating are included. Products without ratings (e.g. AromaPure official catalogue listings without public star reviews) are strictly excluded rather than plotted at zero."
-        >
-          <div className="h-80 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <ScatterChart margin={{ top: 20, right: 30, bottom: 20, left: 10 }}>
-                <XAxis 
-                  type="number" 
-                  dataKey="x" 
-                  name="Selling Price" 
-                  unit="₹" 
-                  tick={{ fontSize: 11, fill: '#64748B' }} 
+      {/* Main Scatter Plot: Price vs. Rating */}
+      <ChartCard
+        title="Price vs. Customer Rating Distribution"
+        subtitle="Scatter distribution of selling price (INR) vs. star rating (0–5)"
+        note="Only products with an observed public rating are included. Products without ratings (e.g. AromaPure official catalogue listings without public star reviews) are strictly excluded rather than plotted at zero."
+      >
+        <div className="h-96 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <ScatterChart margin={{ top: 20, right: 30, bottom: 20, left: 10 }}>
+              <XAxis
+                type="number"
+                dataKey="x"
+                name="Selling Price"
+                unit="₹"
+                tick={{ fontSize: 11, fill: '#64748B' }}
+              />
+              <YAxis
+                type="number"
+                dataKey="y"
+                name="Rating"
+                domain={[3.0, 5.0]}
+                tick={{ fontSize: 11, fill: '#64748B' }}
+              />
+              <ZAxis range={[50, 400]} />
+              <Tooltip
+                cursor={{ strokeDasharray: '3 3' }}
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    const data = payload[0].payload;
+                    return (
+                      <div className="bg-slate-900 text-slate-100 p-3 rounded-lg shadow-lg text-xs max-w-xs border border-slate-800">
+                        <div className="font-semibold text-blue-300 mb-1">{data.brand}</div>
+                        <div className="text-slate-200 font-medium mb-1 line-clamp-2">{data.name}</div>
+                        <div className="text-slate-400">Category: <span className="text-slate-300">{data.category}</span></div>
+                        <div className="text-slate-400">Price: <span className="text-emerald-400 font-bold">₹{data.x}</span></div>
+                        <div className="text-slate-400">Rating: <span className="text-amber-400 font-bold">★ {data.y}</span> ({data.reviews ? `${data.reviews} reviews` : 'No review count'})</div>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '12px' }} />
+              {brandSeries.map((series) => (
+                <Scatter
+                  key={series.brand}
+                  name={series.brand}
+                  data={series.data}
+                  fill={BRAND_COLORS[series.brand] || '#3B82F6'}
+                  shape="circle"
                 />
-                <YAxis 
-                  type="number" 
-                  dataKey="y" 
-                  name="Rating" 
-                  domain={[3.0, 5.0]} 
-                  tick={{ fontSize: 11, fill: '#64748B' }} 
-                />
-                <ZAxis range={[50, 400]} />
-                <Tooltip 
-                  cursor={{ strokeDasharray: '3 3' }}
-                  content={({ active, payload }) => {
-                    if (active && payload && payload.length) {
-                      const data = payload[0].payload;
-                      return (
-                        <div className="bg-slate-900 text-slate-100 p-3 rounded-lg shadow-lg text-xs max-w-xs border border-slate-800">
-                          <div className="font-semibold text-blue-300 mb-1">{data.brand}</div>
-                          <div className="text-slate-200 font-medium mb-1 line-clamp-2">{data.name}</div>
-                          <div className="text-slate-400">Category: <span className="text-slate-300">{data.category}</span></div>
-                          <div className="text-slate-400">Price: <span className="text-emerald-400 font-bold">₹{data.x}</span></div>
-                          <div className="text-slate-400">Rating: <span className="text-amber-400 font-bold">★ {data.y}</span> ({data.reviews ? `${data.reviews} reviews` : 'No review count'})</div>
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
-                />
-                <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '12px' }} />
-                {brandSeries.map((series) => (
-                  <Scatter
-                    key={series.brand}
-                    name={series.brand}
-                    data={series.data}
-                    fill={BRAND_COLORS[series.brand] || '#3B82F6'}
-                    shape="circle"
-                  />
-                ))}
-              </ScatterChart>
-            </ResponsiveContainer>
-          </div>
-        </ChartCard>
-
-        {/* Discount Distribution Analysis */}
-        {discountData.length > 0 && (
-          <ChartCard
-            title="Promotional Discount Depth by Brand"
-            subtitle="Observed average percentage discount off list price (MRP)"
-            note="Calculated strictly across 545 products where valid MRP and discount data exist. Missing discounts are never imputed as 0%."
-          >
-            <div className="h-80 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={discountData} margin={{ top: 10, right: 20, left: -10, bottom: 20 }}>
-                  <XAxis dataKey="brand" tick={{ fontSize: 11, fill: '#64748B' }} />
-                  <YAxis unit="%" tick={{ fontSize: 11, fill: '#64748B' }} domain={[0, 60]} />
-                  <Tooltip
-                    formatter={(val, name, item) => [
-                      `${val}% avg discount (n=${item.payload.count}, min ${item.payload.min}%, max ${item.payload.max}%)`,
-                      'Discount'
-                    ]}
-                    contentStyle={{ backgroundColor: '#0F172A', color: '#F8FAFC', borderRadius: '8px', border: 'none', fontSize: '12px' }}
-                  />
-                  <Bar dataKey="Average Discount" radius={[4, 4, 0, 0]} fill="#F59E0B" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </ChartCard>
-        )}
-      </div>
+              ))}
+            </ScatterChart>
+          </ResponsiveContainer>
+        </div>
+      </ChartCard>
 
       {/* Product Clusters (Statistical Segmentation with Neutral Labels) */}
       {clusterData && clusterData.clusters && clusterData.clusters.length > 0 && (
@@ -283,6 +254,32 @@ export default function PricePositioning() {
             </span>
           </div>
         </div>
+      )}
+
+      {/* Discount Distribution Analysis */}
+      {discountData.length > 0 && (
+        <ChartCard
+          title="Promotional Discount Depth by Brand"
+          subtitle="Observed average percentage discount off list price (MRP)"
+          note="Calculated strictly across 545 products where valid MRP and discount data exist. Missing discounts are never imputed as 0%."
+        >
+          <div className="h-64 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={discountData} margin={{ top: 10, right: 20, left: -10, bottom: 20 }}>
+                <XAxis dataKey="brand" tick={{ fontSize: 11, fill: '#64748B' }} />
+                <YAxis unit="%" tick={{ fontSize: 11, fill: '#64748B' }} domain={[0, 60]} />
+                <Tooltip
+                  formatter={(val, name, item) => [
+                    `${val}% avg discount (n=${item.payload.count}, min ${item.payload.min}%, max ${item.payload.max}%)`,
+                    'Discount'
+                  ]}
+                  contentStyle={{ backgroundColor: '#0F172A', color: '#F8FAFC', borderRadius: '8px', border: 'none', fontSize: '12px' }}
+                />
+                <Bar dataKey="Average Discount" radius={[4, 4, 0, 0]} fill="#F59E0B" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </ChartCard>
       )}
 
       {/* Segregated Unit Pricing Cards */}

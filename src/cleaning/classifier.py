@@ -4,9 +4,18 @@ ALLOWED_BRANDS = ["AromaPure", "Odonil", "Godrej aer", "Air Wick", "Ambi Pur"]
 
 # Car-only indicators
 CAR_EXCLUSION_KEYWORDS = [
-    "car vent", "car perfume flakes", "dashboard perfume", "car dashboard", 
-    "car fragrance", "car hanging", "for car", "car gel", "car air freshener",
-    "dashboard car perfume"
+    "car perfume",
+    "car perfume spray",
+    "car spray",
+    "car freshener",
+    "car air freshener",
+    "car vent",
+    "vent clip",
+    "car hanging",
+    "hanging card",
+    "dashboard perfume",
+    "car fragrance",
+    "auto fragrance",
 ]
 
 # Dual or home indicators that can override ambiguous car mention (e.g. "for home and car")
