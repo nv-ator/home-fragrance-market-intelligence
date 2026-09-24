@@ -1,422 +1,569 @@
 # Home Fragrance Market Intelligence
 
+> **Automated Data Pipeline · SQLite · FastAPI · React · Vite · Business Intelligence**
+
+An end-to-end market intelligence platform for analyzing publicly available home-fragrance product catalogues across five brands in India.
+
+The system collects catalogue data, preserves raw source artifacts, cleans and validates records, standardizes pack sizes and unit economics, stores the analytical dataset in SQLite, exposes metrics through FastAPI, and presents the results through an interactive React dashboard.
+
+---
+
 ## 1. Project Overview
 
-This project provides an automated, end-to-end market intelligence pipeline and interactive analytics dashboard focused on the home fragrance sector in India. It systematically ingests publicly accessible product catalogue data across five selected competitor brands, executes a rigorous cleaning and unit-standardization pipeline, normalizes pricing metrics, and powers an exploratory React dashboard delivering brand positioning and portfolio insights.
+The project provides an automated market intelligence workflow for the Indian home-fragrance category.
 
-## 2. Business Objective
-
-The primary business objective is to empower brand managers, category planners, and market researchers to evaluate brand positioning across observed e-commerce catalogues without relying on speculative or fabricated sales estimates.
-
-The platform addresses key questions:
-
-- How do key competitors position their catalogues across price tiers and formats?
-- Where are observed strengths, coverage concentrations, and portfolio gaps?
-- What are the customer rating signals and engagement footprints across pack sizes and categories?
-
-## 3. Selected Brands
-
-The pipeline systematically analyzes five selected brands in the Indian home fragrance space:
-
-1. **AromaPure** — D2C and marketplace catalogue covering diffusers, room sprays, candles, and fragrance products
-2. **Odonil** — air freshening blocks, gels, and room sprays
-3. **Godrej aer** — bathroom fresheners, aerosol sprays, and automatic diffusers
-4. **Air Wick** — automatic sprays, plug-in diffusers, and refills
-5. **Ambi Pur** — car fresheners, air sprays, and bathroom fresheners
-
-**Note:** AromaPure receives no special bias or asymmetric treatment in the schema, metrics, or dashboard interface. All five brands are evaluated symmetrically.
-
-## 4. Data Sources
-
-Data is sourced strictly from public, accessible e-commerce and brand catalogue sources without bypassing access controls, authentication walls, or CAPTCHA:
-
-- **AromaPure:** Official public product catalogue endpoint (`https://aromahpure.com/products.json`)
-- **Odonil:** Public Amazon India catalogue search listings
-- **Godrej aer:** Public Amazon India catalogue search listings
-- **Air Wick:** Public Amazon India catalogue search listings
-- **Ambi Pur:** Public Amazon India catalogue search listings
-
-Source URLs and raw collection artifacts are preserved in the project for auditability.
-
-## 5. Data Collection Method
-
-- **Methodology:** Polite HTTP requests using standard headers to public endpoints and public search/catalogue listings using `requests` and `BeautifulSoup4`.
-- **Access policy:** No browser automation, CAPTCHA bypass, login bypass, authentication bypass, or access-control circumvention was used.
-- **Request behavior:** Configurable timeouts, retry handling with exponential backoff, and polite sequential delays between marketplace requests.
-- **Compliance:** Access restrictions are respected and collection activities are logged with audit provenance.
-- **Storage:** Raw responses are preserved in `data/raw/` before parsing or transformation. Collection manifests are generated for pipeline runs.
-
-## 6. Pipeline Architecture
+It follows the complete engineering lifecycle:
 
 ```text
-Public E-commerce / Catalogue Sources
-                ↓
-     Data Collection / Scraper
-          (src/scrapers/)
-                ↓
-       Raw Data & Manifests
-       (data/raw/)
-                ↓
-      Cleaning & Validation
-       (src/cleaning/)
-                ↓
-         Standardization
-      (src/transformation/)
-                ↓
-       Analytics Dataset
-    (data/processed/ + SQLite)
-                ↓
-         FastAPI Backend
-             (api/)
-                ↓
-      React / Vite Dashboard
-          (dashboard/)
-                ↓
-        Business Insights
+Collect
+  ↓
+Clean
+  ↓
+Validate
+  ↓
+Transform
+  ↓
+Store
+  ↓
+Analyze
+  ↓
+Visualize
+  ↓
+Communicate
 ```
 
-## 7. Data Schema
+The platform is designed to help analyze:
 
-The unified analytical dataset schema captures both raw observed attributes and standardized dimensions:
+- Product assortment
+- Brand and category coverage
+- Observed pricing
+- Unit economics
+- Ratings and review signals
+- Discounts
+- Product formats
+- Portfolio gaps
+- Observed price positioning
 
-- `product_id`: Unique identifier (SKU, ASIN, or composite hash)
-- `brand_name`: Standardized brand identifier
-- `title`: Complete product title as listed
-- `category`: Standardized home fragrance category
-- `product_type`: Specific format/form factor
-- `price`: Observed selling price in INR
-- `mrp`: Maximum Retail Price / Compare-at price where available
-- `discount_pct`: Observed discount percentage calculated from selling price and MRP
-- `pack_size_raw`: Extracted text describing quantity/volume
-- `standardized_unit`: Base unit of measurement (`ml`, `g`, `count`)
-- `standardized_quantity`: Total normalized numerical quantity in base units
-- `price_per_unit`: Standardized price per unit
-- `rating`: Observed average consumer star rating
-- `review_count`: Observed number of consumer reviews/ratings
-- `platform`: Source channel
-- `availability`: Stock availability status
-- `scraped_at`: Timestamp of collection in UTC
+The analysis is based on publicly accessible catalogue data and **does not claim commercial market share, revenue, sales volume, or profitability**.
 
-Source-specific provenance fields are retained where applicable, including review-source and seller information.
+---
 
-## 8. Cleaning & Validation
+# 2. Business Objective
 
-The data cleaning stage implements verification rules including:
+The objective is to provide a structured view of competitor product catalogues that can support category and brand analysis.
 
-- **Canonical Product Identity**
-  - Amazon listings: Unique marketplace ASIN
-  - AromaPure catalogue: Unique product and variant/SKU identity where available
+The system addresses questions such as:
 
-- **Deduplication**
-  - Duplicate search observations are identified and reduced to one canonical product record.
+- How are tracked brands positioned across observed price ranges?
+- Which categories and product formats are represented?
+- Where are observed catalogue concentrations or gaps?
+- How do pack sizes affect comparable pricing?
+- What rating and review signals are visible in public sources?
+- Which portfolio areas could warrant further investigation?
 
-- **Home Fragrance Scoping**
-  - Car-only products and unrelated non-fragrance products are excluded from the analytical dataset where they fall outside the defined home-fragrance scope.
+All findings distinguish between:
 
-- **Price Sanity & Outlier Handling**
-  - Selling prices must be positive numeric INR values.
-  - Zero-price promotional/freebie records are rejected.
+**Observed Data → Interpretation → Business Question → Validation Required**
 
-- **Missing Value Preservation**
-  - Missing fields remain `NULL`.
-  - Missing discounts are never converted to 0%.
-  - Missing ratings are never converted to 0.
+---
 
-## 9. Price Normalization
+# 3. Brands Covered
 
-To enable meaningful comparisons across disparate product formats:
+The final dataset contains five tracked brands:
 
-- grams (`g`) for solids/gels/candles
-- milliliters (`ml`) for liquids/sprays/oils
-- units (`count`) for multi-packs
+| Brand | Final Validated Products |
+|---|---:|
+| AromaPure | 298 |
+| Godrej aer | 132 |
+| Odonil | 132 |
+| Air Wick | 91 |
+| Ambi Pur | 31 |
+| **Total** | **684** |
 
-### Normalized Price Metrics
+Each brand is processed through the same analytical pipeline and schema.
 
-- **Price per Unit**
+> **Important:** Product counts represent the collected public catalogue and should not be interpreted as market share.
 
-  `Selling Price / Total Units`
+---
 
-  Available across the validated 767-product dataset.
+# 4. Data Sources
 
-- **Price per 100ml**
+Data was collected from publicly accessible e-commerce and brand catalogue sources.
 
-  `Selling Price / Total ml × 100`
+| Brand | Source |
+|---|---|
+| AromaPure | Official public product catalogue |
+| Odonil | Public Amazon India catalogue listings |
+| Godrej aer | Public Amazon India catalogue listings |
+| Air Wick | Public Amazon India catalogue listings |
+| Ambi Pur | Public Amazon India catalogue listings |
 
-  Available for 271 liquid products.
+Source URLs and raw collection artifacts are retained for auditability.
 
-- **Price per 100g**
+## Collection Policy
 
-  `Selling Price / Total grams × 100`
+The project does **not** use:
 
-  Available for 30 solid products.
+- CAPTCHA bypass
+- Authentication bypass
+- Login circumvention
+- Access-control circumvention
+- Credential-based scraping
+- Anti-bot bypass techniques
 
-### Integrity Rule
+Collection uses standard public HTTP requests with configurable timeouts, retry handling, and polite request delays.
 
-Mass and volume metrics are strictly separated. No arbitrary density conversions such as `1g = 1ml` are applied.
+Raw responses are preserved before transformation.
 
-## 10. Analytics Dataset Statistics
+---
 
-- **Total Validated Products:** **767**
+# 5. System Architecture
 
-### Validated Products by Brand
-
-- **AromaPure:** 360 products
-- **Odonil:** 145 products
-- **Godrej aer:** 129 products
-- **Air Wick:** 91 products
-- **Ambi Pur:** 42 products
-
-- **Rejected Records:** 669 records across duplicate, out-of-scope, zero-price, and invalid-brand validation categories.
-
-Rejected records are preserved in:
-
-`data/processed/products_rejected.csv`
-
-## 11. Database Architecture & Analytical Model
-
-The local analytical storage uses **SQLite**, providing lightweight local deployment and transactional database functionality suitable for the analytical workload.
-
-### Relational Schema
-
-The database includes:
-
-- **`brands`** — brand master table
-- **`categories`** — standardized category definitions
-- **`data_sources`** — source and platform metadata
-- **`products`** — canonical analytical product records
-
-The `products` table contains pricing, discount, rating, review, availability, pack-size, normalized quantity, unit economics, source, and collection metadata.
-
-### Reusable Analytical Views & SQL
-
-Reusable analytical views are defined in:
-
-`sql/schema.sql`
-
-including:
-
-- `vw_products_analytical`
-- `vw_market_overview`
-- `vw_brand_comparison`
-- `vw_category_coverage`
-
-Parametric analytical queries are available in:
-
-`sql/analytics_queries.sql`
-
-### Database Loading & Rebuild
-
-The database can be deterministically rebuilt from the processed dataset:
-
-```bash
-python main.py --stage database --rebuild
+```text
+┌──────────────────────────────────────────────┐
+│        Public Catalogue / E-commerce         │
+│                 Sources                      │
+└──────────────────────┬───────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────┐
+│              Data Collection                 │
+│             src/scrapers/                    │
+└──────────────────────┬───────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────┐
+│            Raw Data + Manifests              │
+│                 data/raw/                    │
+└──────────────────────┬───────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────┐
+│          Cleaning & Validation               │
+│              src/cleaning/                   │
+└──────────────────────┬───────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────┐
+│        Transformation & Normalization        │
+│           src/transformation/                │
+└──────────────────────┬───────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────┐
+│             SQLite Database                  │
+│          data/market_intelligence.db         │
+└──────────────────────┬───────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────┐
+│              FastAPI Backend                 │
+│                   api/                       │
+└──────────────────────┬───────────────────────┘
+                       │ REST API
+                       ▼
+┌──────────────────────────────────────────────┐
+│          React / Vite Dashboard              │
+│                dashboard/                    │
+└──────────────────────┬───────────────────────┘
+                       │
+                       ▼
+              Business Insights
 ```
 
-## 12. Dashboard Architecture
+---
 
-The web dashboard is built using:
+# 6. Technology Stack
+
+### Data Engineering
+
+- Python
+- Requests
+- BeautifulSoup4
+- Pandas
+- SQLite
+- SQL
+
+### Backend
+
+- FastAPI
+- Uvicorn
+- Pydantic
+
+### Frontend
 
 - React
 - Vite
 - Tailwind CSS
 - Recharts
 
-### Dashboard Sections
+### Development & Testing
 
-- **Market Overview**
-  - Key market KPIs
-  - Platform breakdown
-  - Category and format distribution
+- Pytest
+- Git
+- GitHub
 
-- **Brand Comparison**
-  - Average and median price
-  - Average rating
-  - Assortment count
-  - Category coverage
-  - Review engagement signals
+---
 
-- **Price Positioning**
-  - Price vs. Rating
-  - Price-per-unit comparisons
-  - Discount distribution
-  - Product clustering
+# 7. Data Schema
 
-- **Product Analysis**
-  - Searchable and filterable product catalogue
-  - Multi-attribute filtering
-  - Product-level detail view
+The analytical dataset captures observed product information and standardized dimensions.
 
-- **Business Insights**
-  - Data-driven diagnostic panels
-  - Category coverage observations
-  - Portfolio investigation areas
+| Field | Description |
+|---|---|
+| `product_id` | Unique SKU, ASIN, or composite identifier |
+| `brand_name` | Standardized brand |
+| `title` | Product title |
+| `category` | Standardized category |
+| `product_type` | Product format/type |
+| `price` | Observed selling price in INR |
+| `mrp` | MRP / compare-at price where available |
+| `discount_pct` | Calculated discount where MRP is available |
+| `pack_size_raw` | Original pack/size text |
+| `standardized_unit` | `ml`, `g`, or `count` |
+| `standardized_quantity` | Normalized quantity |
+| `price_per_unit` | Price normalized to the applicable unit |
+| `rating` | Observed rating |
+| `review_count` | Observed review count |
+| `platform` | Source platform |
+| `availability` | Observed availability |
+| `scraped_at` | Collection timestamp |
 
-## 13. Portfolio Gap Methodology
+Source-specific provenance fields are retained where available.
 
-The system identifies portfolio opportunities through an objective diagnostic framework:
+Missing information remains `NULL` rather than being converted into artificial values.
 
-1. **Category Void**
-   - Identifies categories where a brand has no or limited observed assortment while other tracked brands have collected products.
+---
 
-2. **Price Tier Blank Spots**
-   - Identifies price bands with limited or no observed products for a brand.
+# 8. Data Cleaning & Validation
 
-3. **Engagement Asymmetries**
-   - Identifies categories where competitor review engagement is visibly higher while observed brand assortment is limited.
+The cleaning pipeline applies deterministic validation rules.
 
-4. **Structured Decision Framing**
+## Product Identity
 
-Every finding follows:
+- Amazon products use unique marketplace ASINs.
+- AromaPure products use available product/variant/SKU identities.
+
+## Deduplication
+
+Duplicate observations are reduced to canonical product records.
+
+## Home-Fragrance Scope
+
+Products outside the defined home-fragrance scope are excluded from the analytical dataset.
+
+This includes **car-only products** where they fall outside the defined home-fragrance scope.
+
+## Price Validation
+
+- Selling prices must be positive numeric INR values.
+- Zero-price promotional/freebie records are rejected.
+- Invalid price records are excluded.
+
+## Missing Values
+
+Missing values are preserved:
+
+- Missing rating → `NULL`
+- Missing review count → `NULL`
+- Missing discount → `NULL`
+- Missing seller → `NULL` where unavailable
+
+Missing information is never interpreted as zero.
+
+---
+
+# 9. Final Dataset
+
+The final validated dataset contains:
+
+## Full Validated Dataset
+
+**684 products**
+
+| Brand | Products |
+|---|---:|
+| AromaPure | 298 |
+| Godrej aer | 132 |
+| Odonil | 132 |
+| Air Wick | 91 |
+| Ambi Pur | 31 |
+| **Total** | **684** |
+
+The final cleaning process excluded **135 car-only records** that were outside the defined home-fragrance analytical scope.
+
+## Dashboard Analytical Sample
+
+For consistent cross-brand dashboard comparisons, the dashboard uses a deterministic analytical sample of:
+
+**120 products**
+
+| Brand | Dashboard Products |
+|---|---:|
+| AromaPure | 24 |
+| Godrej aer | 24 |
+| Odonil | 24 |
+| Air Wick | 24 |
+| Ambi Pur | 24 |
+| **Total** | **120** |
+
+The 120-product sample is an analytical presentation sample and should not be confused with the complete 684-product validated dataset.
+
+---
+
+# 10. Price Normalization
+
+Products are normalized according to their physical measurement type.
+
+### Solids / Gels / Candles
+
+Measured using:
 
 ```text
-Observed Data
-      ↓
-Interpretation
-      ↓
-Business Question
-      ↓
-Investigation Area
-      ↓
-Validation Required
+₹ / 100g
 ```
 
-These findings are intended as analytical investigation areas rather than direct product-launch recommendations.
-
-## 14. Limitations
-
-- **Catalogue Scope:** Metrics represent the collected public catalogue sample at the time of scraping, not total historical or offline sales volume.
-- **No Private Commercial Metrics:** Sales velocity, revenue, conversion rates, margins, and profitability are not publicly available and are excluded.
-- **Platform Bias:** Marketplace visibility and ranking algorithms may influence which products are surfaced.
-- **Review Comparability:** Review counts depend on the source and availability of public review information. Marketplace and official-brand review counts should not automatically be treated as directly comparable.
-- **Catalogue Coverage:** Absence from the collected dataset does not prove that a brand does not commercially offer a product in that category.
-- **Market Share:** Share of collected assortment must not be interpreted as commercial market share.
-
-## 15. Setup
-
-### Prerequisites
-
-- Python 3.10+
-- Node.js 18+
-- npm
-
-### Python Environment
-
-```bash
-python -m venv venv
-```
-
-#### Windows
-
-```bash
-venv\Scripts\activate
-```
-
-#### Linux/macOS
-
-```bash
-source venv/bin/activate
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-## 16. Reproducible Automation
-
-The complete end-to-end pipeline is automated and reproducible through a single command:
-
-```bash
-python main.py
-```
-
-### Complete Pipeline Flow
+Formula:
 
 ```text
-python main.py
-      ↓
-[COLLECT]
-Public ingestion from selected catalogue sources
-      ↓
-[CLEAN]
-Deduplication, scope filtering, price validation
-      ↓
-[TRANSFORM]
-Type enforcement and standardized dimensions
-      ↓
-[DATABASE]
-SQLite analytical dataset loading
-      ↓
-[VALIDATE]
-Automated quality gate
-      ↓
-[REPORT]
-Pipeline execution manifest and validation report
+Selling Price / Total Grams × 100
 ```
 
-### Transformation Methodology
+### Liquids / Sprays / Oils
 
-The transformation stage performs deterministic processing:
+Measured using:
 
-- Numerical coercion for prices, discounts, ratings, reviews, and quantities
-- Standardized quantity and unit handling
-- Preservation of unavailable values as `NULL`
-- No speculative business labels such as "Value", "Mass-Market", or "Premium"
-- Analytical positioning based on observed empirical distributions
-
-### Re-execution
-
-Running:
-
-```bash
-python main.py
+```text
+₹ / 100ml
 ```
 
-repeatedly uses the deterministic pipeline/database process and avoids duplicate analytical records.
+Formula:
 
-### Modular CLI Commands
+```text
+Selling Price / Total ml × 100
+```
+
+### Multi-packs
+
+Where applicable:
+
+```text
+₹ / Unit
+```
+
+Formula:
+
+```text
+Selling Price / Total Units
+```
+
+## Integrity Rule
+
+Mass and volume are kept strictly separate.
+
+The pipeline does **not** make arbitrary assumptions such as:
+
+```text
+1g = 1ml
+```
+
+---
+
+# 11. Database Architecture
+
+The analytical database uses **SQLite**.
+
+Database:
+
+```text
+data/market_intelligence.db
+```
+
+## Main Tables
+
+### `brands`
+
+Stores the tracked brand master data.
+
+### `categories`
+
+Stores standardized category definitions.
+
+### `data_sources`
+
+Stores source and platform metadata.
+
+### `products`
+
+Stores canonical analytical product records.
+
+The product records contain pricing, ratings, reviews, availability, pack-size information, normalized quantities, source metadata, and collection timestamps.
+
+---
+
+# 12. Analytical SQL
+
+Reusable analytical views are defined in:
+
+```text
+sql/schema.sql
+```
+
+Important views include:
+
+```text
+vw_products_analytical
+vw_market_overview
+vw_brand_comparison
+vw_category_coverage
+```
+
+Reusable analytical queries are available in:
+
+```text
+sql/analytics_queries.sql
+```
+
+The database can be deterministically rebuilt from the processed dataset using:
 
 ```bash
-# Full pipeline
-python main.py
-
-# Collection only
-python main.py --stage collect
-
-# Cleaning only
-python main.py --stage clean
-
-# Transformation only
-python main.py --stage transform
-
-# Database rebuild
 python main.py --stage database --rebuild
+```
 
-# Validation / quality gate
+---
+
+# 13. Automated Pipeline
+
+The entire workflow can be executed through:
+
+```bash
+python main.py
+```
+
+Pipeline flow:
+
+```text
+python main.py
+      │
+      ▼
+   COLLECT
+      │
+      ▼
+    CLEAN
+      │
+      ▼
+  TRANSFORM
+      │
+      ▼
+  DATABASE
+      │
+      ▼
+  VALIDATE
+      │
+      ▼
+   REPORT
+```
+
+## Pipeline Stages
+
+### Collection
+
+Collect public catalogue data and preserve raw responses.
+
+### Cleaning
+
+Perform:
+
+- Deduplication
+- Brand validation
+- Scope filtering
+- Price validation
+- Missing-value handling
+
+### Transformation
+
+Perform:
+
+- Numerical coercion
+- Unit normalization
+- Quantity standardization
+- Feature preparation
+
+### Database
+
+Load canonical records into SQLite.
+
+### Validation
+
+Run automated quality checks.
+
+### Reporting
+
+Generate pipeline execution and validation information.
+
+---
+
+# 14. CLI Commands
+
+### Run the complete pipeline
+
+```bash
+python main.py
+```
+
+### Collection only
+
+```bash
+python main.py --stage collect
+```
+
+### Cleaning only
+
+```bash
+python main.py --stage clean
+```
+
+### Transformation only
+
+```bash
+python main.py --stage transform
+```
+
+### Database rebuild
+
+```bash
+python main.py --stage database --rebuild
+```
+
+### Validation
+
+```bash
 python main.py --stage validate
+```
 
-# Help
+### Help
+
+```bash
 python main.py --help
 ```
 
-## 17. Analytical API Layer — FastAPI Backend
+---
 
-The FastAPI analytical service provides a REST delivery layer between the SQLite analytical database and the React/Vite dashboard.
+# 15. FastAPI Backend
 
-### Architecture
+The FastAPI service provides the REST layer between SQLite and the React dashboard.
 
 ```text
 SQLite
-  ↓
+   ↓
 FastAPI
-  ↓
+   ↓
 Parameterized SQL / Pydantic
-  ↓
-React / Vite Dashboard
+   ↓
+React Dashboard
 ```
 
-### Running the API
+## Run the API
 
 ```bash
 python -m uvicorn api.main:app --reload --port 8000
@@ -424,45 +571,49 @@ python -m uvicorn api.main:app --reload --port 8000
 
 API documentation:
 
-`http://localhost:8000/docs`
+```text
+http://localhost:8000/docs
+```
 
 OpenAPI schema:
 
-`http://localhost:8000/openapi.json`
+```text
+http://localhost:8000/openapi.json
+```
 
-### Endpoint Catalog
+## API Endpoints
 
-| Endpoint | Method | Purpose |
-|---|---|---|
-| `/api/health` | GET | API and database health check |
-| `/api/overview` | GET | Market-level KPIs |
-| `/api/brands` | GET | Tracked brand list |
-| `/api/brands/comparison` | GET | Brand comparison metrics |
-| `/api/brands/{brand_name}` | GET | Brand-level diagnostics |
-| `/api/products` | GET | Filterable and paginated product catalogue |
-| `/api/products/{product_id}` | GET | Individual product record |
-| `/api/analytics/price-positioning` | GET | Price vs. rating analytical data |
-| `/api/analytics/price-normalization` | GET | Unit pricing metrics |
-| `/api/analytics/categories` | GET | Category-level analysis |
-| `/api/analytics/platforms` | GET | Platform/channel analysis |
-| `/api/analytics/discounts` | GET | Discount analysis |
-| `/api/analytics/category-coverage` | GET | Brand × category coverage |
-| `/api/filters` | GET | Dynamic dashboard filter values |
+| Endpoint | Purpose |
+|---|---|
+| `/api/health` | API/database health check |
+| `/api/overview` | Market-level KPIs |
+| `/api/brands` | Tracked brands |
+| `/api/brands/comparison` | Brand comparison |
+| `/api/brands/{brand_name}` | Brand-level diagnostics |
+| `/api/products` | Filterable product catalogue |
+| `/api/products/{product_id}` | Product details |
+| `/api/analytics/price-positioning` | Price/rating analysis |
+| `/api/analytics/price-normalization` | Unit economics |
+| `/api/analytics/categories` | Category analysis |
+| `/api/analytics/platforms` | Platform analysis |
+| `/api/analytics/discounts` | Discount analysis |
+| `/api/analytics/category-coverage` | Brand × category coverage |
+| `/api/filters` | Dashboard filter values |
 
-### Data Quality & Null Handling
+---
 
-- Missing ratings, reviews, and discounts are returned as JSON `null`.
-- Missing values are never converted to artificial zero values.
-- Database queries use parameterized SQL.
-- Analytical queries use database indexes where applicable.
+# 16. React Business Intelligence Dashboard
 
-## 18. React Business Intelligence Dashboard
+The frontend is built with:
 
-The frontend is a responsive Business Intelligence dashboard built with **React**, **Vite**, **Tailwind CSS**, and **Recharts**.
+- React
+- Vite
+- Tailwind CSS
+- Recharts
 
-It communicates with the FastAPI analytical backend over REST endpoints.
+The frontend communicates with the FastAPI backend through REST APIs.
 
-### Dashboard Structure
+## Dashboard Structure
 
 ```text
 dashboard/
@@ -493,41 +644,13 @@ dashboard/
         └── index.css
 ```
 
-### Installation & Execution
+---
 
-```bash
-cd dashboard
-npm install
-npm run dev
-```
+# 17. Dashboard Pages
 
-The application runs at:
+## Market Overview
 
-`http://localhost:5173`
-
-Production build:
-
-```bash
-npm run build
-```
-
-### Environment Configuration
-
-Optional `.env` configuration:
-
-```env
-VITE_API_BASE_URL=http://localhost:8000
-```
-
-If omitted, the frontend defaults to:
-
-`http://localhost:8000`
-
-## 19. Dashboard Pages & Visualizations
-
-### 1. Market Overview
-
-Displays:
+Provides:
 
 - Total observed products
 - Tracked brands
@@ -535,20 +658,16 @@ Displays:
 - Median price
 - Average rating
 - Average observed discount
-- Assortment by brand
-- Assortment by category
-- Assortment by platform
-- Observed price distribution
+- Brand assortment
+- Category distribution
+- Platform distribution
+- Price distribution
 
-### 2. Brand Comparison
+---
 
-Provides symmetric comparison across:
+## Brand Comparison
 
-- AromaPure
-- Odonil
-- Godrej aer
-- Air Wick
-- Ambi Pur
+Provides symmetric comparison across all five brands.
 
 Metrics include:
 
@@ -559,93 +678,167 @@ Metrics include:
 - Category coverage
 - Observed review engagement
 
-### 3. Price Positioning
+---
 
-Includes:
+## Price Positioning
 
-- Interactive Price vs. Rating scatter plot
-- Segregated ₹/100ml and ₹/100g unit economics
-- Promotional discount distribution
+Provides:
+
+- Price vs. rating analysis
+- ₹/100ml comparisons
+- ₹/100g comparisons
+- Discount distribution
 - Product clustering
 
-#### Product Clustering
+---
 
-K-Means clustering is applied to products with complete numerical features including:
+## Product Analysis
+
+Provides searchable and filterable product-level analysis.
+
+Available filters include:
+
+- Brand
+- Category
+- Platform
+- Product type
+- Pack size
+- Availability
+- Price range
+- Rating
+- Keyword search
+
+---
+
+## Business Insights
+
+Provides diagnostic business-analysis panels based on observed catalogue data.
+
+The framework is:
+
+```text
+Observation
+     ↓
+Interpretation
+     ↓
+Commercial Question
+     ↓
+Validation Required
+```
+
+---
+
+# 18. Product Clustering
+
+K-Means clustering is applied to products with complete numerical features.
+
+Features include:
 
 - Selling price
 - Rating
 - Discount percentage
 - `log(1 + reviews)`
 
-Candidate values of `K=2..5` are evaluated using silhouette score.
+Candidate values of:
 
-Clusters are labelled neutrally as:
+```text
+K = 2 ... 5
+```
 
-- Cluster 1
-- Cluster 2
-- Cluster 3
-- Cluster 4
+are evaluated using silhouette score.
 
-No subjective commercial labels such as "Premium" or "Budget" are assigned.
+Clusters are labelled neutrally:
 
-### 4. Product Analysis
+```text
+Cluster 1
+Cluster 2
+Cluster 3
+Cluster 4
+```
 
-Provides dynamic filtering by:
+The system intentionally avoids subjective commercial labels such as:
 
-- Brand
-- Category
-- Platform
-- Product type / format
-- Pack size / count
-- Availability
-- Price range
-- Rating
-- Keyword search
+- Premium
+- Budget
+- Value
+- Mass-Market
 
-The catalogue is paginated and provides product-level details and public source links.
+---
 
-### 5. Business Insights
+# 19. Portfolio Gap Methodology
 
-Uses a four-part diagnostic framework:
+The dashboard uses a diagnostic framework to identify areas for further investigation.
 
-**Observation → Interpretation → Commercial Question → Validation Required**
+### 1. Category Voids
 
-The dashboard also provides a Brand × Category observed coverage matrix.
+Categories where a brand has limited or no observed assortment while other tracked brands have collected products.
 
-## 20. Business Insights Approach
+### 2. Price-Tier Gaps
 
-The dashboard translates factual catalogue observations into commercial decision-support using a reproducible analytical structure.
+Price ranges where the observed assortment is limited or absent.
 
-### Observation vs. Interpretation
+### 3. Engagement Asymmetries
 
-- **Factual Observation:** Directly measurable data from the verified dataset.
-- **Analytical Interpretation:** A hypothesis explaining an observed pattern without claiming causality.
-- **Commercial Business Question:** A strategic question that a brand manager could investigate.
-- **Internal Validation Required:** Proprietary information needed before making a commercial decision.
+Categories where competitor review engagement is visibly higher while observed assortment is limited.
 
-### Analytical Boundaries
+### 4. Decision Framework
 
-#### Catalogue Assortment vs. Market Share
+Every finding follows:
 
-Percentages represent **Share of Collected Assortment**, not commercial market share or sales share.
+```text
+Observed Data
+      ↓
+Interpretation
+      ↓
+Business Question
+      ↓
+Investigation Area
+      ↓
+Validation Required
+```
 
-#### Review Engagement vs. Market Share
+These findings are **investigation areas**, not direct product-launch recommendations.
 
-Observed review counts represent customer-feedback visibility on the collected public sources. They should not be interpreted as market share, sales volume, or sales velocity.
+---
 
-AromaPure official review information was available for a subset of products. These source-specific observations are retained with their provenance, while unavailable values remain `NULL`.
+# 20. Analytical Boundaries
 
-#### Category Coverage
+The dashboard deliberately distinguishes catalogue observations from commercial conclusions.
 
-A zero in the category coverage matrix means:
+## Catalogue Assortment ≠ Market Share
 
-> No observed product in the collected public dataset.
+Percentages represent:
 
-It does not prove that the brand has no commercial offering in that category.
+```text
+Share of Collected Assortment
+```
 
-#### Price Positioning
+They do not represent:
 
-Price positioning is analyzed using:
+- Market share
+- Sales share
+- Revenue share
+
+## Reviews ≠ Sales
+
+Review counts represent public customer-feedback visibility and should not be interpreted as:
+
+- Sales volume
+- Sales velocity
+- Revenue
+- Market share
+
+## Category Absence
+
+A category with zero observed products means:
+
+> No product was observed in the collected public dataset.
+
+It does **not** prove that the brand commercially offers no such product.
+
+## Price Positioning
+
+Positioning is analyzed using:
 
 - Mean
 - Median
@@ -654,26 +847,31 @@ Price positioning is analyzed using:
 - Unit pricing
 - Price vs. rating relationships
 
-Subjective labels such as:
+No subjective price-tier labels are assigned.
 
-- Value
-- Mass-Market
-- Premium
-- Budget
+---
 
-are intentionally excluded.
+# 21. Business Insights Framework
 
-#### Unit Economics
+The project separates factual observations from interpretations.
 
-Liquid products are evaluated separately using ₹/100ml and solid products using ₹/100g.
+### Factual Observation
 
-Mass and volume are never combined through arbitrary density assumptions.
+Directly measurable information from the validated dataset.
 
-#### Portfolio Opportunity Framing
+### Analytical Interpretation
 
-Observed catalogue gaps are presented as investigation areas rather than direct product-launch recommendations.
+A hypothesis that explains an observed pattern without claiming causality.
 
-Commercial decisions should be validated using internal information such as:
+### Commercial Business Question
+
+A question that can be investigated by a brand or category manager.
+
+### Internal Validation Required
+
+Additional proprietary information required before making a commercial decision.
+
+Examples of required internal validation include:
 
 - Sales data
 - POS sell-through
@@ -683,27 +881,289 @@ Commercial decisions should be validated using internal information such as:
 - Distribution capability
 - Demand signals
 
-## 21. Testing
+---
 
-Run the automated test suite covering collection parsers, cleaning rules, unit normalization, database operations, pipeline orchestration, and API endpoints:
+# 22. Limitations
+
+### Catalogue Scope
+
+The dataset represents publicly collected catalogue information at the time of collection, not total historical or offline sales.
+
+### Commercial Metrics
+
+The project does not contain reliable public information for:
+
+- Revenue
+- Sales velocity
+- Conversion rates
+- Margins
+- Profitability
+
+### Platform Bias
+
+Marketplace ranking and visibility mechanisms may influence which products are surfaced.
+
+### Review Comparability
+
+Review counts depend on the source and availability of public information.
+
+Marketplace and official-brand review counts should not automatically be treated as directly comparable.
+
+### Catalogue Coverage
+
+Absence from the collected dataset does not prove that a brand has no commercial offering in that category.
+
+### Market Share
+
+Observed assortment must not be interpreted as commercial market share.
+
+---
+
+# 23. Setup
+
+## Prerequisites
+
+- Python 3.10+
+- Node.js 18+
+- npm
+
+## Create Python Environment
+
+```bash
+python -m venv venv
+```
+
+### Windows
+
+```bash
+venv\Scripts\activate
+```
+
+### Linux / macOS
+
+```bash
+source venv/bin/activate
+```
+
+## Install Python Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+# 24. Run the Dashboard
+
+Start the FastAPI backend first:
+
+```bash
+python -m uvicorn api.main:app --reload --port 8000
+```
+
+Then start the React dashboard:
+
+```bash
+cd dashboard
+npm install
+npm run dev
+```
+
+The frontend runs at:
+
+```text
+http://localhost:5173
+```
+
+The API runs at:
+
+```text
+http://localhost:8000
+```
+
+---
+
+# 25. Environment Configuration
+
+The frontend can optionally use:
+
+```env
+VITE_API_BASE_URL=http://localhost:8000
+```
+
+If this variable is omitted, the frontend defaults to:
+
+```text
+http://localhost:8000
+```
+
+For production deployment, `VITE_API_BASE_URL` should point to the publicly accessible FastAPI backend URL.
+
+---
+
+# 26. Production Build
+
+Build the React application with:
+
+```bash
+cd dashboard
+npm run build
+```
+
+The production output is generated in:
+
+```text
+dashboard/dist/
+```
+
+---
+
+# 27. Testing
+
+Run the automated test suite:
 
 ```bash
 pytest tests/ -v
 ```
 
-## 22. AI Usage Disclosure
+The tests cover areas including:
 
-AI-assisted tools were used during development primarily for debugging, documentation assistance, and development support.
+- Data collection
+- Cleaning rules
+- Unit normalization
+- Database operations
+- Pipeline orchestration
+- API endpoints
+
+The final project was validated through automated tests and production frontend build verification.
+
+---
+
+# 28. Project Structure
+
+```text
+home-fragrance-market-intelligence/
+│
+├── api/
+│   ├── main.py
+│   └── routes/
+│
+├── config/
+│   └── config.yaml
+│
+├── dashboard/
+│   ├── src/
+│   ├── package.json
+│   └── vite.config.js
+│
+├── data/
+│   ├── raw/
+│   ├── processed/
+│   └── market_intelligence.db
+│
+├── docs/
+│   ├── BUSINESS_REQUIREMENT_COVERAGE.md
+│   ├── FINAL_METRICS.md
+│   ├── FINAL_PROJECT_STATUS.md
+│   ├── FINAL_REQUIREMENT_GAP_RESULT.md
+│   └── FINAL_SUBMISSION_CHECKLIST.md
+│
+├── sql/
+│   ├── schema.sql
+│   └── analytics_queries.sql
+│
+├── src/
+│   ├── cleaning/
+│   ├── database/
+│   ├── pipeline/
+│   ├── scrapers/
+│   ├── transformation/
+│   └── utils/
+│
+├── tests/
+│
+├── main.py
+├── requirements.txt
+├── README.md
+└── .gitignore
+```
+
+---
+
+# 29. Reproducibility & Provenance
+
+The project preserves collection provenance through:
+
+- Raw source artifacts
+- Source metadata
+- Collection timestamps
+- Collection manifests
+- Pipeline execution manifests
+- Processed datasets
+- Validation reports
+
+A separate `scrape_runs` database table is not required because run-level provenance is maintained through these collection and pipeline artifacts.
+
+---
+
+# 30. AI Usage Disclosure
+
+AI-assisted tools were used during development primarily for:
+
+- Debugging
+- Documentation assistance
+- Development support
 
 All generated suggestions and code changes were reviewed, tested, and validated against the project requirements and automated test suite.
 
-## 23. Future Improvements
+---
 
-Potential future improvements include:
+# 31. Future Improvements
 
-- Scheduled recurring ingestion to track historical price and promotional changes
-- Historical price tracking and change detection
-- Natural Language Processing for customer-review sentiment and fragrance-profile extraction
-- Integration of regional quick-commerce availability feeds
-- Additional public catalogue sources for broader market coverage
-- Historical dashboard snapshots for trend analysis
+Potential production improvements include:
+
+- Scheduled recurring ingestion
+- Historical price tracking
+- Price-change detection
+- Review sentiment analysis
+- Fragrance-profile extraction using NLP
+- Regional quick-commerce availability feeds
+- Additional public catalogue sources
+- Historical dashboard snapshots
+- Automated monitoring of catalogue changes
+
+---
+
+# 32. Key Project Takeaways
+
+The project demonstrates an end-to-end data engineering and business intelligence workflow:
+
+```text
+Public Data
+    ↓
+Automated Collection
+    ↓
+Raw Data Preservation
+    ↓
+Cleaning & Validation
+    ↓
+Unit Normalization
+    ↓
+SQLite Storage
+    ↓
+FastAPI Analytics Layer
+    ↓
+React BI Dashboard
+    ↓
+Evidence-Based Insights
+```
+
+The final validated catalogue contains **684 products across five brands**, while a deterministic **120-product balanced sample** is used for consistent dashboard-level comparison.
+
+The system is designed to support **evidence-based market intelligence without fabricating market share, sales, revenue, or unavailable commercial metrics**.
+
+---
+
+## License / Assignment Use
+
+This project was developed as part of a technical assignment demonstrating data collection, automation, data engineering, analytics, visualization, and business insight generation.
