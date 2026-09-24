@@ -1,0 +1,39 @@
+# Prerequisites & Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual Environments
+venv/
+.venv/
+ENV/
+env/
+
+# Environment Variables & Secrets
+.env
+.env.*
+!.env.example
+
+# Node / Frontend Build Artifacts
+node_modules/
+dashboard/node_modules/
+dashboard/dist/
+.npm/
+
+# IDE & Editor Configs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# OS Temporary Files
+*.log
+tmp/
+scratch/

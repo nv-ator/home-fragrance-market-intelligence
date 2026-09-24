@@ -1,0 +1,53 @@
+{
+  "products": [
+    {
+      "id": 9901,
+      "title": "AromaPure Reed Diffuser French Lavender",
+      "handle": "reed-diffuser-french-lavender",
+      "vendor": "Aromahpure",
+      "product_type": "Reed Diffuser",
+      "tags": ["Home Fragrance", "Diffuser", "Lavender"],
+      "body_html": "<p>Calming French Lavender aroma diffuser.</p>",
+      "variants": [
+        {
+          "id": 8801,
+          "sku": "AP-RD-LAV-100",
+          "title": "100ml",
+          "price": "499.00",
+          "compare_at_price": "699.00",
+          "available": true,
+          "grams": 100
+        },
+        {
+          "id": 8802,
+          "sku": "AP-RD-LAV-200",
+          "title": "200ml",
+          "price": "899.00",
+          "compare_at_price": "1199.00",
+          "available": false,
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "id": 9902,
+      "title": "AromaPure Soy Wax Candle Rose",
+      "handle": "soy-wax-candle-rose",
+      "vendor": "Aromahpure",
+      "product_type": "Scented Candle",
+      "tags": ["Candle", "Rose"],
+      "body_html": "<p>Hand-poured candle.</p>",
+      "variants": [
+        {
+          "id": 8803,
+          "sku": "AP-CAN-ROS",
+          "title": "Default Title",
+          "price": "349.00",
+          "compare_at_price": null,
+          "available": true,
+          "grams": 150
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+# Configuration for Home Fragrance Market Intelligence Scraper
+
+selected_brands:
+  - name: "AromaPure"
+    source_type: "shopify_json"
+    catalogue_url: "https://aromahpure.com/products.json"
+    page_limit: 250
+  - name: "Odonil"
+    source_type: "amazon_search"
+    search_queries:
+      - "Odonil air freshener"
+      - "Odonil room spray pocket"
+  - name: "Godrej aer"
+    source_type: "amazon_search"
+    search_queries:
+      - "Godrej aer air freshener"
+      - "Godrej aer pocket matic spray"
+  - name: "Air Wick"
+    source_type: "amazon_search"
+    search_queries:
+      - "Air Wick air freshener"
+      - "Air Wick automatic spray refill"
+  - name: "Ambi Pur"
+    source_type: "amazon_search"
+    search_queries:
+      - "Ambi Pur air freshener"
+      - "Ambi Pur room spray car freshener"
+
+request_settings:
+  timeout: 15
+  delay_range: [2.5, 4.0]
+  retry_count: 3
+  backoff_factor: 2.0
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  max_pages_per_query: 2
+
+storage:
+  raw_base_dir: "data/raw"
